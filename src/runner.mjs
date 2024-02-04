@@ -5,8 +5,9 @@ const USERNAME = process.argv.slice(2)[0].split('=')[1];
 
 async function run(command, args) {
     try {
-        await getCommand(command)(args);
+        await getCommand(command)(...args);
     } catch (e) {
+        console.error(e.message);
         throw Error('Invalid input');
     }
 }
@@ -19,9 +20,11 @@ console.log('Welcome to the File Manager, ' + USERNAME + '!');
         const input = data.toString('utf-8').trim();
         const command = input.split(' ')[0];
         const args = input.split(' ').slice(1);
-
+        if (!command) {
+            return;
+        }
         try {
-            await run(command, ...args);
+            await run(command, args);
         } catch (e) {
             console.error(e.message);
         }

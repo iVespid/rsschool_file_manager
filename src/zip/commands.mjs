@@ -1,6 +1,6 @@
 import * as zip from "./zip.mjs";
 
 export const COMMANDS = {
-    'compress': async (args) => await zip.compress(args),
-    'decompress': async (args) => await zip.decompress(args)
+    'compress': async (source, target) => await zip.compress(source, target),
+    'decompress': async (source, target) => await zip.decompress(source, target)
 }

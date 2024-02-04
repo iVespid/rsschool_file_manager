@@ -16,5 +16,5 @@ export function resolvePath(p) {
 }
 
 export function printCurrentDirectory() {
-    console.log('You are currently in ' + currentDir);
+    console.log('\nYou are currently in ' + currentDir);
 }

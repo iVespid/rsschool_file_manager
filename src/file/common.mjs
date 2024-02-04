@@ -1,5 +1,17 @@
 import fs from "fs/promises";
 
+export function pipeAsync(source, target) {
+    return new Promise((resolve, reject) => {
+        source.on('error', reject);
+        target.on('error', reject);
+        source.on('finish', resolve);
+        target.on('finish', resolve);
+        source.on('end', resolve);
+        target.on('end', resolve);
+        source.pipe(target);
+    });
+}
+
 export async function validatePathExist(expectedExistState, filePath) {
     let isFileExists;
     try {

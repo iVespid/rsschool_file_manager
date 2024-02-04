@@ -1,6 +1,7 @@
-import {validatePathExist} from "./common.mjs";
+import {pipeAsync, validatePathExist} from "./common.mjs";
 import fs from "fs/promises";
 import {currentDir, resolvePath} from "../currentDirectoryManager.mjs";
+import path from 'path';
 
 import {pipeline} from "stream/promises";
 
@@ -39,8 +40,7 @@ export async function cat(p) {
     await validatePathExist(true, filePath);
     const f = await fs.open(filePath);
     const stream = f.createReadStream({encoding: 'utf8'});
-    await pipeline(stream, process.stdout);
-    console.log('');
+    await pipeAsync(stream, process.stdout);
 }
 
 export async function add(fileName) {
@@ -57,18 +57,22 @@ export async function rename(sourcePath, targetPath) {
     await fs.rename(sourceFilePath, targetFilePath);
 }
 
-export async function copy(sourcePath, targetPath) {
+export async function copy(sourcePath, targetDirectory) {
     const sourceFilePath = resolvePath(sourcePath);
     await validatePathExist(true, sourceFilePath);
-    const targetFilePath = resolvePath(targetPath);
+    const targetDirectoryPath = resolvePath(targetDirectory);
+    let targetFilePath = path.join(targetDirectoryPath, path.basename(sourceFilePath));
+    await validatePathExist(true, targetDirectoryPath);
     await validatePathExist(false, targetFilePath);
     const fhs = await fs.open(sourceFilePath);
-    const fht = await fs.open(targetFilePath);
-    await pipeline(fhs.createReadStream(sourceFilePath), fht.createWriteStream(targetFilePath));
+    const fht = await fs.open(targetFilePath, 'w');
+    await pipeline(fhs.createReadStream(), fht.createWriteStream());
 }
 
 export async function remove(sourcePath) {
-    await fs.unlink(resolvePath(sourcePath));
+    const sourceFilePath = resolvePath(sourcePath);
+    await validatePathExist(true, sourceFilePath);
+    await fs.unlink(sourceFilePath);
 }
 
 export async function move(sourcePath, targetPath) {
