@@ -1,0 +1,11 @@
+{
+  "name": "rsschool_file_manager",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node src/runner.mjs",
+    "startFileManager": "npm run start -- --username=your_username"
+  },
+  "author": "",
+  "license": "ISC"
+}
